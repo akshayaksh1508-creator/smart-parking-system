@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>QR Scanner</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+
+    body{
+      margin:0;
+      background:#020617;
+      color:white;
+      font-family:Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      flex-direction:column;
+    }
+
+    h1{
+      margin-bottom:20px;
+      color:#38bdf8;
+    }
+
+    #reader{
+      width:350px;
+      background:white;
+      padding:15px;
+      border-radius:20px;
+    }
+
+    #result{
+      margin-top:20px;
+      font-size:20px;
+      font-weight:bold;
+      color:#22c55e;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<h1>Smart Parking QR Scanner</h1>
+
+<div id="reader"></div>
+
+<div id="result"></div>
+
+<script>
+
+const API_URL = "http://172.17.38.167:5000";
+
+function onScanSuccess(decodedText){
+
+    document.getElementById("result").innerText =
+      "QR Scanned Successfully";
+
+    fetch(`${API_URL}/verify-qr`, {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            qr_token: decodedText
+        })
+
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("result").innerText =
+          data.message || data.error;
+
+    })
+    .catch(err => {
+
+        console.log(err);
+
+        document.getElementById("result").innerText =
+          "Server Error";
+    });
+}
+
+const scanner = new Html5QrcodeScanner(
+    "reader",
+    {
+        fps:10,
+        qrbox:{
+            width:250,
+            height:250
+        }
+    }
+);
+
+scanner.render(onScanSuccess);
+
+</script>
+
+</body>
+</html>
