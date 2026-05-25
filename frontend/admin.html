@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Parking Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+<section id="adminLoginBox" class="admin-login-card">
+  <h2>Admin Login</h2>
+
+  <input id="adminUsername" placeholder="Admin Username">
+  <input id="adminPassword" type="password" placeholder="Admin Password">
+
+  <button onclick="adminLogin()">Login</button>
+
+  <p id="adminLoginMessage"></p>
+</section>
+
+<section id="adminDashboard" style="display:none;">
+
+  <header class="admin-header">
+    <div>
+      <h1>Smart Parking Admin Dashboard</h1>
+      <p>Manage slots, vehicles, bookings, revenue and parking price</p>
+    </div>
+
+    <button onclick="adminLogout()">Logout</button>
+  </header>
+  <div id="arrivalAlert" class="arrival-alert"></div>
+  <section class="stats">
+    <div class="stat">
+      <span>Total Slots</span>
+      <h2 id="totalSlots">0</h2>
+    </div>
+
+    <div class="stat green">
+      <span>Available Slots</span>
+      <h2 id="availableSlots">0</h2>
+    </div>
+
+    <div class="stat red">
+      <span>Occupied Slots</span>
+      <h2 id="occupiedSlots">0</h2>
+    </div>
+
+    <div class="stat orange">
+      <span>Total Revenue</span>
+      <h2 id="totalRevenue">₹0</h2>
+    </div>
+  </section>
+
+  <section class="settings-card">
+    <h2>Parking Settings</h2>
+    <p>Admin can update number of slots and price per hour</p>
+    
+    <div class="settings-grid">
+      <input type="number" id="adminTotalSlots" placeholder="Total Slots">
+      <input type="number" id="adminPrice" placeholder="Price Per Hour ₹">
+
+      <button onclick="saveParkingSettings()">Save Settings</button>
+    </div>
+
+    <p id="settingsMessage"></p>
+  </section>
+
+  <section class="slots-card">
+    <h2>Live Parking Slots</h2>
+
+    <div id="slotGrid" class="slot-grid"></div>
+  </section>
+
+  <section class="table-card">
+    <div class="table-header">
+      <h2>Vehicle Logs</h2>
+      <input id="searchInput" onkeyup="filterTable()" placeholder="Search vehicle...">
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Vehicle</th>
+          <th>Owner</th>
+          <th>Slot</th>
+          <th>Entry</th>
+          <th>Exit</th>
+          <th>Fee</th>
+          <th>Fine</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody id="vehicleTable"></tbody>
+    </table>
+  </section>
+
+</section>
+
+<script src="admin.js"></script>
+</body>
+</html>
