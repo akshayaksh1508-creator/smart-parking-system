@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Parking User</title>
+  <link rel="stylesheet" href="user.css" />
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🚘</div>
+      <div>
+        <h2>SMART</h2>
+        <h2>PARKING</h2>
+      </div>
+    </div>
+
+    <button class="nav active" onclick="showPage('dashboardPage', this)">Dashboard</button>
+    <button class="nav" onclick="showPage('bookingPage', this)">Book Slot</button>
+    <button class="nav" onclick="showPage('bookingsPage', this)">My Bookings</button>
+    <button class="nav" onclick="showPage('vehiclePage', this)">My Vehicle</button>
+    <button class="nav" onclick="showPage('historyPage', this)">History</button>
+    <button class="nav" onclick="showPage('paymentsPage', this)">Payments</button>
+    <button class="nav" onclick="showPage('profilePage', this)">Profile</button>
+
+    <div class="profile-card">
+      <div class="avatar">👤</div>
+      <div>
+        <h4 id="sideUser">User</h4>
+        <p id="sideVehicle">Vehicle</p>
+        <span>● Online</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="topbar">
+      <div>
+        <h1>Real-Time Smart Parking Map</h1>
+        <p>Live smart parking with QR entry and IoT hardware</p>
+      </div>
+
+      <div class="top-right">
+        <div class="time-box">🕒 <span id="clock">--:--</span></div>
+        <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+      </div>
+    </header>
+
+    <!-- LOGIN / REGISTER -->
+    <section id="authBox" class="auth-card">
+      <div class="tabs">
+        <button class="tab active" onclick="showLogin()">Login</button>
+        <button class="tab" onclick="showRegister()">Register</button>
+      </div>
+
+      <div id="loginForm">
+        <h2>Welcome Back</h2>
+        <input id="loginEmail" type="email" placeholder="Email Address" />
+        <input id="loginPassword" type="password" placeholder="Password" />
+        <button class="primary-btn" onclick="loginUser()">Login</button>
+      </div>
+
+      <div id="registerForm" style="display:none;">
+        <h2>Create Account</h2>
+        <input id="regName" placeholder="Full Name" />
+        <input id="regEmail" type="email" placeholder="Email Address" />
+        <input id="regPhone" placeholder="Phone Number" />
+        <input id="regVehicle" placeholder="Vehicle Number" />
+        <input id="regPassword" type="password" placeholder="Password" />
+        <button class="primary-btn" onclick="registerUser()">Register</button>
+      </div>
+
+      <p id="authMessage" class="message"></p>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" style="display:none;">
+
+      <!-- MAIN DASHBOARD PAGE -->
+      <section id="dashboardPage" class="page active-page">
+
+        <!-- STATS -->
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-icon blue-i">P</div>
+            <div>
+              <span>Total Slots</span>
+              <h2 id="totalSlots">0</h2>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon green-i">✓</div>
+            <div>
+              <span>Available</span>
+              <h2 id="availableSlots" class="green-num">0</h2>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon red-i">🚗</div>
+            <div>
+              <span>Occupied</span>
+              <h2 id="occupiedSlots" class="red-num">0</h2>
+            </div>
+          </div>
+          <div class="stat">
+            <div class="stat-icon orange-i">📅</div>
+            <div>
+              <span>Booked</span>
+              <h2 id="bookedSlots" class="orange-num">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D PARKING MAP -->
+        <section class="map-card">
+          <div class="three-map">
+            <div class="entry-sign">ENTRY</div>
+            <div class="exit-sign">EXIT</div>
+
+            <div id="threeParkingModel"></div>
+
+            <div class="map-controls">
+              <button onclick="setMapView('2d')" id="btn2d">2D View</button>
+              <button onclick="setMapView('3d')" id="btn3d" class="active">3D View</button>
+              <button onclick="fullscreenMap()">⛶ Fullscreen</button>
+            </div>
+
+            <div class="legend">
+              <span><b class="dot available-dot"></b>Available</span>
+              <span><b class="dot occupied-dot"></b>Occupied</span>
+              <span><b class="dot booked-dot"></b>Booked</span>
+              <span><b class="dot user-dot"></b>Your Vehicle</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- HARDWARE ARRIVAL ALERT (separate from QR form) -->
+        <div id="arrivalAlert" style="display:none; background:#16a34a; color:white; padding:12px 18px; border-radius:12px; margin-bottom:16px; font-weight:700;"></div>
+
+        <div class="dashboard-grid">
+
+          <!-- ENTRY QR FORM -->
+          <section class="entry-box">
+            <h2>🚗 Generate Entry QR</h2>
+            <p>Enter registered vehicle details to generate QR code</p>
+            <input id="entryVehicleNumber" placeholder="Enter Vehicle Number" />
+            <input id="entryOwnerName" placeholder="Enter Owner Name" />
+            <button onclick="generateEntryQR()">Generate QR</button>
+            <p id="entryMessage" class="message"></p>
+          </section>
+
+          <!-- QR DISPLAY -->
+          <section id="qrSection" class="qr-card" style="display:none;">
+            <h2>Your Parking QR Code</h2>
+            <img id="qrImage" src="" alt="QR Code" />
+            <p>Scan this QR using scanner page</p>
+          </section>
+
+          <!-- RIGHT PANEL -->
+          <aside class="right-panel">
+
+            <div class="panel">
+              <h3>Live Capacity</h3>
+              <div class="capacity">
+                <div class="circle">
+                  <span id="capacityPercent">0%</span>
+                  <small>Occupied</small>
+                </div>
+                <ul>
+                  <li><span>Available</span><b id="sideAvailable">0</b></li>
+                  <li><span>Occupied</span><b id="sideOccupied">0</b></li>
+                  <li><span>Booked</span><b id="sideBooked">0</b></li>
+                  <li><span>Total</span><b id="sideTotal">0</b></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>AI Parking Prediction</h3>
+              <h2 class="demand">High Demand</h2>
+              <p>Expected busy period</p>
+              <h4>6:00 PM - 8:00 PM</h4>
+              <div class="ai-graph">
+                <span style="height:15%"></span>
+                <span style="height:25%"></span>
+                <span style="height:35%"></span>
+                <span style="height:60%"></span>
+                <span style="height:90%"></span>
+                <span style="height:70%"></span>
+                <span style="height:55%"></span>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Quick Actions</h3>
+              <div class="quick-actions">
+                <button onclick="showPage('bookingPage')">📅<span>Book</span></button>
+                <button onclick="generateEntryQR()">🔳<span>QR</span></button>
+                <button onclick="vehicleExit()">🚪<span>Exit</span></button>
+                <button onclick="loadLatestQR()">📲<span>Latest QR</span></button>
+              </div>
+            </div>
+
+          </aside>
+
+        </div>
+
+        <p id="message" class="message"></p>
+
+        <div class="bottom-cards">
+          <section class="mini-card" onclick="showPage('vehiclePage')">
+            <h3>My Vehicle</h3>
+            <p id="dashVehicle">Vehicle</p>
+            <div class="mini-car">🚗</div>
+          </section>
+
+          <section class="mini-card" onclick="showPage('historyPage')">
+            <h3>Recent History</h3>
+            <p>Entry / Exit details</p>
+            <span class="mini-badge">View</span>
+          </section>
+
+          <section class="mini-card" onclick="showPage('paymentsPage')">
+            <h3>Payments</h3>
+            <p>Parking payment details</p>
+            <h2>₹0</h2>
+          </section>
+
+          <section class="mini-card" onclick="showPage('profilePage')">
+            <h3>Profile</h3>
+            <p id="dashProfile">User details</p>
+            <button>Edit Profile</button>
+          </section>
+        </div>
+
+      </section>
+
+      <!-- BOOK SLOT PAGE -->
+      <section id="bookingPage" class="page">
+        <div class="section-card">
+          <h2>Book Parking Slot</h2>
+          <p>Reserve your slot for a specific date and time</p>
+
+          <div class="booking-grid">
+            <select id="bookingSlot">
+              <option value="">Select Slot</option>
+              <option value="1">Slot 1</option>
+              <option value="2">Slot 2</option>
+              <option value="3">Slot 3</option>
+            </select>
+            <input type="datetime-local" id="bookingStart" />
+            <input type="datetime-local" id="bookingEnd" />
+            <button onclick="bookSlot()">Book Slot</button>
+          </div>
+
+          <p id="bookingMessage" class="message"></p>
+        </div>
+      </section>
+
+      <!-- MY BOOKINGS PAGE -->
+      <section id="bookingsPage" class="page">
+        <div class="section-card">
+          <h2>My Bookings</h2>
+          <div id="myBookings" class="records-grid"></div>
+        </div>
+      </section>
+
+      <!-- MY VEHICLE PAGE -->
+      <section id="vehiclePage" class="page">
+        <div class="section-card">
+          <h2>My Vehicle</h2>
+          <div class="records-grid">
+            <div class="record">
+              <p><b>Owner:</b> <span id="ownerDetail"></span></p>
+              <p><b>Vehicle Number:</b> <span id="vehicleDetail"></span></p>
+              <p class="active-text">Registered Vehicle</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORY PAGE -->
+      <section id="historyPage" class="page">
+        <div class="section-card">
+          <h2>Parking History</h2>
+          <div id="myRecords" class="records-grid"></div>
+        </div>
+      </section>
+
+      <!-- PAYMENTS PAGE -->
+      <section id="paymentsPage" class="page">
+        <div class="section-card">
+          <h2>Payments</h2>
+          <div class="records-grid">
+            <div class="record">
+              <p><b>Payment Mode:</b> Cash / UPI at Exit</p>
+              <p><b>Parking Rate:</b> Based on admin price</p>
+              <p><b>Fine:</b> ₹500 for wrong reserved slot</p>
+              <p class="booked-text">Online payment can be added later</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE PAGE -->
+      <section id="profilePage" class="page">
+        <div class="section-card">
+          <h2>Profile</h2>
+          <div class="records-grid">
+            <div class="record">
+              <p><b>Name:</b> <span id="profileName"></span></p>
+              <p><b>Email:</b> <span id="profileEmail"></span></p>
+              <p><b>Phone:</b> <span id="profilePhone"></span></p>
+              <p><b>Vehicle:</b> <span id="profileVehicle"></span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </section><!-- end #dashboard -->
+
+  </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="user.js"></script>
+
+</body>
+</html>
