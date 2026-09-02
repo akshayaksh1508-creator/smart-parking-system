@@ -540,7 +540,7 @@ def entry_vehicle():
         WHERE id=%s
     """, (qr_url, log_id))
 
-    hardware_command["entry_gate"] = True
+    
 
     cursor.close()
     db.close()
@@ -786,16 +786,16 @@ def get_vehicle_arrival():
     return jsonify(vehicle_arrival)
 
 @app.route("/hardware/gate-command", methods=["GET"])
-def get_gate_command():
+def gate_command():
+
     global hardware_command
 
-    command = hardware_command.copy()
+    response = hardware_command.copy()
 
     hardware_command["entry_gate"] = False
     hardware_command["exit_gate"] = False
 
-    return jsonify(command)
-
+    return jsonify(response)
 
 @app.route("/hardware/open-entry", methods=["POST"])
 def open_entry_from_website():

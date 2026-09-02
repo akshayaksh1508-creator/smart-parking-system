@@ -1,6 +1,6 @@
 // static/script.js
 
-const API_URL = "http://172.17.38.167:5000";
+const API_URL = "http://10.228.197.103:5000";
 
 // ---------------- LOAD STATUS ---------------- //
 

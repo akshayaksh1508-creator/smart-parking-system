@@ -11,7 +11,7 @@ const char* password = "244466666";
 
 /* ================= FLASK BACKEND ================= */
 
-String serverURL = "http://172.17.38.167:5000";
+String serverURL = "http://10.228.197.103:5000";
 
 /* ================= IR SENSOR PINS ================= */
 
@@ -24,7 +24,7 @@ String serverURL = "http://172.17.38.167:5000";
 
 /* ================= SERVO PINS ================= */
 
-#define ENTRY_SERVO_PIN 14
+#define ENTRY_SERVO_PIN 12
 #define EXIT_SERVO_PIN 13
 
 /* ================= SERVO OBJECTS ================= */
